@@ -23,19 +23,43 @@ public class SnakeBehavior : MonoBehaviour {
     private Transform prebody;
     public int behavior=0;
     public float bhrate=0;
-	// Use this for initialization
-	void Start () {
+
+    // Use this for initialization
+    void Start () {
         StartGame(inti);
-        
-	}
-	
-	// Update is called once per frame
-	void Update () {
+
+        // You can use this to call static methods
+        // However static method cannot give access to MonoBehaviour public variables
+        SpawnFood.bar();
+    }
+
+    // This is the part used to detect collision
+    // I change the "Layer" of the "Head" in "SNAKE" to SNAKE (using unity editor)
+    // So that if a collison happens in the Head, it will pass that signal to the nearest Rigidbody, in this case it is the "SNAKE"'s Rigidbody 
+    // I also turned off the Sphere Collider in Sphere Prefab (using unity-editor)
+    // So that if the tail touches the food it DO NOT destroy the food
+
+    void OnCollisionEnter(Collision collision)
+    {   
+        // Create an instance, which links to SpawnFood.cs script
+        // Because SpawnFood.cs script is attached to "Camera", we find "Camera" and get the component
+        SpawnFood SpawnFood_instance = GameObject.Find("Camera").GetComponent<SpawnFood>();   
+
+        Debug.Log("You collided with " + collision.gameObject);
+        if (collision.gameObject.tag == "Food") {
+            Destroy(collision.gameObject);
+            AddBody();
+            SpawnFood_instance.LetSpawnFood();
+        }
+    }
+    
+    // Update is called once per frame
+    void Update () {
         if (IfAlive)
             move();
         if (Input.GetKey(KeyCode.Q)) AddBody();
         if (Input.GetKey(KeyCode.R)) StartGame(inti);
-	}
+    }
 
     void StartGame(int x)
     {
@@ -87,11 +111,10 @@ public class SnakeBehavior : MonoBehaviour {
             if (dist < mindist) continue;
             curbody.position = Vector3.Slerp(curbody.position, npos, Time.deltaTime * realspeed*2);
             curbody.rotation = Quaternion.Slerp(curbody.rotation, prebody.rotation, Time.deltaTime * realspeed*2);
-            
-
         }
         
     }
+
     
     public void AddBody()
     {
