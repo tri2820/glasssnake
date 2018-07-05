@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class SnakeBehavior : MonoBehaviour {
 
@@ -13,7 +14,11 @@ public class SnakeBehavior : MonoBehaviour {
     public float rotatespeed = 1;
     public int inti = 1;
     public float mindist = 0.5f;
-    
+    public GameObject DeadScreen;
+    public float TimeLastPlay;
+    public Text CurrentScore;
+    public Text ScoreText;
+    public bool IfAlive;
     private Transform curbody;
     private Transform prebody;
     public int behavior=0;
@@ -26,21 +31,28 @@ public class SnakeBehavior : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-        move();
+        if (IfAlive)
+            move();
         if (Input.GetKey(KeyCode.Q)) AddBody();
         if (Input.GetKey(KeyCode.R)) StartGame(inti);
 	}
 
     void StartGame(int x)
     {
+        DeadScreen.SetActive(false);
+        TimeLastPlay = Time.time;
         inti = x;
-        for (int i = Body.Count-1; i >= 1; i--)
+        IfAlive = true;
+        for (int i = Body.Count-1; i > 0; i--)
         {
             Destroy(Body[i].gameObject);
             Body.Remove(Body[i]);
         }
+        
         Body[0].position = beginposition;
         Body[0].rotation = beginrotation;
+        CurrentScore.gameObject.SetActive(true);
+        CurrentScore.text = "Score : 0";
         for (int i = 0; i < inti - 1; i++) AddBody();
 
     }
@@ -60,7 +72,9 @@ public class SnakeBehavior : MonoBehaviour {
             Body[0].rotation = Body[0].rotation * Quaternion.Euler(0, -rotatespeed, 0);
         }
         Body[0].Translate(Body[0].forward * realspeed * Time.smoothDeltaTime, Space.World);
-        
+        Vector3 temp = Body[0].rotation.eulerAngles;
+        temp.x = 0;temp.z = 0;
+        Body[0].rotation = Quaternion.Euler(temp);
         
         for (int i=1;i<Body.Count;i++)
         {
@@ -84,5 +98,14 @@ public class SnakeBehavior : MonoBehaviour {
         Transform newbody = (Instantiate(Bodyprefab, Body[Body.Count - 1].position, Body[Body.Count - 1].rotation) as GameObject).transform;
         newbody.SetParent(transform);
         Body.Add(newbody);
+        CurrentScore.text = "Score: " + (Body.Count - inti).ToString();
+    }
+    public void DIE()
+    {
+  
+        IfAlive = false;
+        ScoreText.text = "your score was: " + (Body.Count - inti).ToString();
+        CurrentScore.gameObject.SetActive(false);
+        DeadScreen.SetActive(true);
     }
 }

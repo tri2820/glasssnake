@@ -63,6 +63,8 @@
   <ItemGroup>
     <Compile Include="Assets\Scripts\Move.cs" />
     <Compile Include="Assets\Scripts\SnakeBehavior.cs" />
+    <Compile Include="Assets\Scripts\SnakeHead.cs" />
+    <Compile Include="Assets\Scripts\SpawnFood.cs" />
     <Compile Include="Assets\Scripts\ThirdPersonCamera.cs" />
     <Reference Include="UnityEditor.StandardEvents">
       <HintPath>D:/UNITY/Snake/Library/ScriptAssemblies/UnityEditor.StandardEvents.dll</HintPath>
