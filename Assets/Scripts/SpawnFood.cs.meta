@@ -3,7 +3,9 @@ guid: ff8c8b9dcf90d56488eb3c06749429d2
 MonoImporter:
   externalObjects: {}
   serializedVersion: 2
-  defaultReferences: []
+  defaultReferences:
+  - FoodPrefab: {fileID: 1743643263797698, guid: 37e5b13feb2fccd49b204505ed83e858,
+      type: 2}
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 
