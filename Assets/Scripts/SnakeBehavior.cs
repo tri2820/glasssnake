@@ -13,6 +13,7 @@ public class SnakeBehavior : MonoBehaviour {
     public Quaternion beginrotation = Quaternion.identity;
     public float rotatespeed = 1;
     public int inti = 1;
+    public float ifcoli = 0;
     public float mindist = 0.5f;
     public GameObject DeadScreen;
     public float TimeLastPlay;
@@ -23,7 +24,7 @@ public class SnakeBehavior : MonoBehaviour {
     private Transform prebody;
     public int behavior=0;
     public float bhrate=0;
-
+    public GameObject plat;
     // Use this for initialization
     void Start () {
         StartGame(inti);
@@ -40,17 +41,22 @@ public class SnakeBehavior : MonoBehaviour {
     // So that if the tail touches the food it DO NOT destroy the food
 
     void OnCollisionEnter(Collision collision)
-    {   
+    {
+        ifcoli = 1;
         // Create an instance, which links to SpawnFood.cs script
         // Because SpawnFood.cs script is attached to "Camera", we find "Camera" and get the component
-        SpawnFood SpawnFood_instance = GameObject.Find("Camera").GetComponent<SpawnFood>();   
+        SpawnFood SpawnFood_instance = plat.GetComponent<SpawnFood>();   
 
         Debug.Log("You collided with " + collision.gameObject);
-        if (collision.gameObject.tag == "Food") {
+        if (collision.gameObject.tag == "Food")
+        {
             Destroy(collision.gameObject);
             AddBody();
             SpawnFood_instance.LetSpawnFood();
         }
+        if (collision.gameObject.tag == "Obstacle")
+            DIE();
+        
     }
     
     // Update is called once per frame
@@ -59,9 +65,10 @@ public class SnakeBehavior : MonoBehaviour {
             move();
         if (Input.GetKey(KeyCode.Q)) AddBody();
         if (Input.GetKey(KeyCode.R)) StartGame(inti);
+        if (Input.GetKey(KeyCode.P)) DIE();
     }
 
-    void StartGame(int x)
+    public void StartGame(int x)
     {
         DeadScreen.SetActive(false);
         TimeLastPlay = Time.time;
@@ -83,6 +90,8 @@ public class SnakeBehavior : MonoBehaviour {
 
     public void move(){
         float realspeed = speed;
+        transform.rotation = beginrotation;
+        transform.position = beginposition;
         if (Input.GetKey(KeyCode.UpArrow))
             realspeed = speed * 2;
         if (Input.GetKey(KeyCode.DownArrow))
@@ -95,22 +104,25 @@ public class SnakeBehavior : MonoBehaviour {
         {
             Body[0].rotation = Body[0].rotation * Quaternion.Euler(0, -rotatespeed, 0);
         }
-        Body[0].Translate(Body[0].forward * realspeed * Time.smoothDeltaTime, Space.World);
         Vector3 temp = Body[0].rotation.eulerAngles;
-        temp.x = 0;temp.z = 0;
+        temp.x = 0; temp.z = 0;
         Body[0].rotation = Quaternion.Euler(temp);
+        Body[0].Translate(Body[0].forward * realspeed * Time.smoothDeltaTime, Space.World);
+
         
         for (int i=1;i<Body.Count;i++)
         {
             curbody = Body[i];
             prebody = Body[i - 1];
             float dist = Vector3.Distance(curbody.position, prebody.position);
-            
-
+            float ripdist = Vector3.Distance(curbody.position, Body[0].position);
+            if (Time.time - TimeLastPlay > 5)
+                if (i > 1)
+                    if (ripdist < 1) DIE();
             Vector3 npos = prebody.position;
             if (dist < mindist) continue;
-            curbody.position = Vector3.Slerp(curbody.position, npos, Time.deltaTime * realspeed*2);
-            curbody.rotation = Quaternion.Slerp(curbody.rotation, prebody.rotation, Time.deltaTime * realspeed*2);
+            curbody.position = Vector3.Slerp(curbody.position, npos, Time.smoothDeltaTime * realspeed*1.5f);
+            curbody.rotation = Quaternion.Slerp(curbody.rotation, prebody.rotation, Time.deltaTime * realspeed);
         }
         
     }
