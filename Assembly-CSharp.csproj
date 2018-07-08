@@ -61,6 +61,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Assets\Scripts\Score.cs" />
     <Compile Include="Assets\Scripts\SnakeBehavior.cs" />
     <Compile Include="Assets\Scripts\SpawnFood.cs" />
     <Compile Include="Assets\Scripts\Sunlight.cs" />

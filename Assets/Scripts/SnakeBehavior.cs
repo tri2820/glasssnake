@@ -6,7 +6,7 @@ using UnityEngine.UI;
 public class SnakeBehavior : MonoBehaviour {
 
     public List<Transform> body = new List<Transform>();
-
+    public Vector3 Headposition;
     // Bodyprefab is set to Sphere prefab, which can be set in unity-editor
     public GameObject Bodyprefab;
 
@@ -30,18 +30,20 @@ public class SnakeBehavior : MonoBehaviour {
     public bool ifAlive;
     public Text currentScore;
     public GameObject platform;
-
-
+    bool flagDie = false;
+    public SpawnFood foodController;
     void Start () {
+        foodController = platform.GetComponent<SpawnFood>();
         StartGame(initLength);
     }
 
-    void StartGame(int length)
+    public void StartGame(int length)
     {   
         initLength = length;
         Debug.Log("You called StartGame! initLength = " + initLength);
+        flagDie = false;
 
-        SpawnFood foodController = platform.GetComponent<SpawnFood>();   
+
         foodController.LetDestroyFood();
         foodController.LetSpawnFood();
 
@@ -49,13 +51,15 @@ public class SnakeBehavior : MonoBehaviour {
         timeLastPlay = Time.time;
         
         ifAlive = true;
-
-
+        setBodyLength(1); // Destroy all the body before start newgame;
+        transform.rotation = beginRotation;
+        transform.position = beginPosition;
+        body[0].position = new Vector3(0,0,0);
+        body[0].rotation = Quaternion.identity;
+        Headposition = body[0].gameObject.transform.position;
         setBodyLength(initLength);
         // The first element in body is "Head", which can be set using unity-editor
-        body[0].position = beginPosition;
-        body[0].rotation = beginRotation;
-
+       
         currentScore.gameObject.SetActive(true);
     }
 
@@ -79,24 +83,26 @@ public class SnakeBehavior : MonoBehaviour {
             foodController.LetSpawnFood();
         }
 
-        if (collision.gameObject.tag == "Obstacle") Die();
+        if (collision.gameObject.tag == "Obstacle") ifAlive=false;
     }
     
 
     // Update is called once per frame
     void Update () {
+        transform.rotation = beginRotation;
+        transform.position = beginPosition;
         if (ifAlive) Move();
+        else Die();
         if (Input.GetKey(KeyCode.Q)) AddBody();
         if (Input.GetKey(KeyCode.R)) StartGame(initLength);
         if (Input.GetKey(KeyCode.P)) Die();
         UpdateScore();
+        
     }
 
 
     public void Move(){
         float realspeed = speed;
-        transform.rotation = beginRotation;
-        transform.position = beginPosition;
         if (Input.GetKey(KeyCode.UpArrow))
             realspeed = speed * 2;
         if (Input.GetKey(KeyCode.DownArrow))
@@ -123,7 +129,7 @@ public class SnakeBehavior : MonoBehaviour {
             float ripdist = Vector3.Distance(curbody.position, body[0].position);
             if (Time.time - timeLastPlay > 5)
                 if (i > 1)
-                    if (ripdist < 1) Die();
+                    if (ripdist < 1) ifAlive=false;
             Vector3 npos = prebody.position;
             if (dist < minDistance) continue;
             curbody.position = Vector3.Slerp(curbody.position, npos, Time.smoothDeltaTime * realspeed*1.5f);

@@ -6,16 +6,19 @@ public class ThirdPersonCamera : MonoBehaviour {
     public float speed = 1;
     public Transform target;
     public Camera cam;
-    
+    public GameObject snake;
+    public SnakeBehavior flag;
     
 	void LateUpdate () {
+        flag = snake.GetComponent<SnakeBehavior>();
+        if (flag.ifAlive)
         Move();
 	}
     
     public void Move()
     {
-              
-        transform.position = Vector3.Slerp(transform.position, target.position, Time.deltaTime * speed);
+
+        transform.position = target.position;
         transform.rotation = target.rotation;
 
     }
