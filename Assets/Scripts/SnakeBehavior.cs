@@ -57,7 +57,6 @@ public class SnakeBehavior : MonoBehaviour {
         body[0].rotation = beginRotation;
 
         currentScore.gameObject.SetActive(true);
-        UpdateScore();
     }
 
     // I changed the "Layer" of the "Head" in "SNAKE" to SNAKE (using unity editor)
@@ -78,7 +77,6 @@ public class SnakeBehavior : MonoBehaviour {
             Destroy(collision.gameObject);
             AddBody();
             foodController.LetSpawnFood();
-            UpdateScore();
         }
 
         if (collision.gameObject.tag == "Obstacle") Die();
@@ -91,6 +89,7 @@ public class SnakeBehavior : MonoBehaviour {
         if (Input.GetKey(KeyCode.Q)) AddBody();
         if (Input.GetKey(KeyCode.R)) StartGame(initLength);
         if (Input.GetKey(KeyCode.P)) Die();
+        UpdateScore();
     }
 
 
@@ -153,6 +152,7 @@ public class SnakeBehavior : MonoBehaviour {
     }
 
     public void UpdateScore(){
+        Debug.Log("Update score!");
         currentScore.text = "Score: " + (body.Count - initLength).ToString();
     }
 
