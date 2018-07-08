@@ -128,8 +128,8 @@ public class SnakeBehavior : MonoBehaviour {
             float dist = Vector3.Distance(curbody.position, prebody.position);
             float ripdist = Vector3.Distance(curbody.position, body[0].position);
             if (Time.time - timeLastPlay > 5)
-                if (i > 1)
-                    if (ripdist < 1) ifAlive=false;
+                if (i > 2)
+                    if (ripdist < 0.5) ifAlive=false;
             Vector3 npos = prebody.position;
             if (dist < minDistance) continue;
             curbody.position = Vector3.Slerp(curbody.position, npos, Time.smoothDeltaTime * realspeed*1.5f);
