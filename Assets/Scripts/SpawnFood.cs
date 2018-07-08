@@ -6,10 +6,10 @@ public class SpawnFood : MonoBehaviour {
     public Vector3 center;
     public Vector3 size;
     public GameObject FoodPrefab;
+     public List<GameObject> ListOfFood = new List<GameObject>();
 
 	// Use this for initialization
 	void Start () {
-        LetSpawnFood();
         Debug.Log("This SpawnFood script is attached to " + this);
 	}
 	
@@ -21,9 +21,22 @@ public class SpawnFood : MonoBehaviour {
 
     public void LetSpawnFood()
     {
-        Debug.Log("You spawned Food!");
         Vector3 pos = center + new Vector3(Random.Range(-size.x / 2, size.x / 2), 0, Random.Range(-size.z / 2, size.z / 2));
-        Instantiate(FoodPrefab, pos, Quaternion.identity);
+        GameObject newFood = Instantiate(FoodPrefab, pos, Quaternion.identity);
+        ListOfFood.Add(newFood);
+        Debug.Log("You spawned Food!");
+    }
+
+    public void LetDestroyFood()
+    {
+        foreach (var food in ListOfFood) {
+            Destroy(food);    
+        }
+
+        ListOfFood.Clear();
+
+        Debug.Log("You destroyed all the Food! Food left: " + ListOfFood.Count);
+
     }
 
     private void OnDrawGizmosSelected()
@@ -32,17 +45,6 @@ public class SpawnFood : MonoBehaviour {
         Gizmos.DrawCube(center, size);
     }
 
-    // public class SpawnFood_Controlller{
-    //     void foo(){
-    //         Debug.Log("Called Foo");
-    //     }
-    // }
-
-    public static void bar(){
-        Debug.Log("Called Bar");
-        
-        // LetSpawnFood();
-    }
 
 
 }
