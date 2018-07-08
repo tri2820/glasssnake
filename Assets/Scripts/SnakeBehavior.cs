@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 public class SnakeBehavior : MonoBehaviour {
 
-    public List<Transform> Body = new List<Transform>();
+    public List<Transform> body = new List<Transform>();
 
     // Bodyprefab is set to Sphere prefab, which can be set in unity-editor
     public GameObject Bodyprefab;
@@ -52,9 +52,9 @@ public class SnakeBehavior : MonoBehaviour {
 
 
         setBodyLength(initLength);
-        // The first element in Body is "Head", which can be set using unity-editor
-        Body[0].position = beginPosition;
-        Body[0].rotation = beginRotation;
+        // The first element in body is "Head", which can be set using unity-editor
+        body[0].position = beginPosition;
+        body[0].rotation = beginRotation;
 
         currentScore.gameObject.SetActive(true);
         UpdateScore();
@@ -104,24 +104,24 @@ public class SnakeBehavior : MonoBehaviour {
             realspeed = speed / 2;
         if (Input.GetKey(KeyCode.RightArrow))
         {
-            Body[0].rotation = Body[0].rotation * Quaternion.Euler(0, rotateSpeed, 0);
+            body[0].rotation = body[0].rotation * Quaternion.Euler(0, rotateSpeed, 0);
         }
         if (Input.GetKey(KeyCode.LeftArrow))
         {
-            Body[0].rotation = Body[0].rotation * Quaternion.Euler(0, -rotateSpeed, 0);
+            body[0].rotation = body[0].rotation * Quaternion.Euler(0, -rotateSpeed, 0);
         }
-        Vector3 temp = Body[0].rotation.eulerAngles;
+        Vector3 temp = body[0].rotation.eulerAngles;
         temp.x = 0; temp.z = 0;
-        Body[0].rotation = Quaternion.Euler(temp);
-        Body[0].Translate(Body[0].forward * realspeed * Time.smoothDeltaTime, Space.World);
+        body[0].rotation = Quaternion.Euler(temp);
+        body[0].Translate(body[0].forward * realspeed * Time.smoothDeltaTime, Space.World);
 
         
-        for (int i=1;i<Body.Count;i++)
+        for (int i=1;i<body.Count;i++)
         {
-            Transform curbody = Body[i];
-            Transform prebody = Body[i - 1];
+            Transform curbody = body[i];
+            Transform prebody = body[i - 1];
             float dist = Vector3.Distance(curbody.position, prebody.position);
-            float ripdist = Vector3.Distance(curbody.position, Body[0].position);
+            float ripdist = Vector3.Distance(curbody.position, body[0].position);
             if (Time.time - timeLastPlay > 5)
                 if (i > 1)
                     if (ripdist < 1) Die();
@@ -135,25 +135,25 @@ public class SnakeBehavior : MonoBehaviour {
     
     public void setBodyLength(int n)
     {
-        while (Body.Count < n) AddBody();
-        while (Body.Count > n) RemoveBody();
-        Debug.Log("Reset body length to " + Body.Count);
+        while (body.Count < n) AddBody();
+        while (body.Count > n) RemoveBody();
+        Debug.Log("Reset body length to " + body.Count);
     }
 
     public void AddBody(){
-        Transform newBlock = (Instantiate(Bodyprefab, Body[Body.Count - 1].position, Body[Body.Count - 1].rotation) as GameObject).transform;
+        Transform newBlock = (Instantiate(Bodyprefab, body[body.Count - 1].position, body[body.Count - 1].rotation) as GameObject).transform;
         newBlock.SetParent(transform);
-        Body.Add(newBlock);
+        body.Add(newBlock);
     }
 
     public void RemoveBody(){
-        Transform lastBlock = Body[Body.Count -1];
+        Transform lastBlock = body[body.Count -1];
         Destroy(lastBlock.gameObject);
-        Body.Remove(lastBlock);
+        body.Remove(lastBlock);
     }
 
     public void UpdateScore(){
-        currentScore.text = "Score: " + (Body.Count - initLength).ToString();
+        currentScore.text = "Score: " + (body.Count - initLength).ToString();
     }
 
     public void Die()
@@ -161,6 +161,6 @@ public class SnakeBehavior : MonoBehaviour {
         ifAlive = false;
         currentScore.gameObject.SetActive(false);
         deadScreen.SetActive(true);
-        scoreText.text = "your score was: " + (Body.Count - initLength).ToString();
+        scoreText.text = "your score was: " + (body.Count - initLength).ToString();
     }
 }

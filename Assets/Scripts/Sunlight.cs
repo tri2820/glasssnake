@@ -3,35 +3,37 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class Sunlight : MonoBehaviour {
-    public Vector3 Center;
-    public Vector3 Beginposition;
-    public Vector3 Endposition;
+    public Vector3 center;
+    public Vector3 beginPosition;
+    public Vector3 endPosition;
     public float speed = 10f;
     public float dayend = 0;
     public bool ifday = true;
     public float retime;
-    public GameObject Light;
+
+    // light is set using unity-editor
+    public GameObject light;
 	// Update is called once per frame
 	void Update () {
         retime = Time.time;
         Vector3 temp;
-        temp.x = Beginposition.x - (Beginposition.x - Endposition.x) * (Time.time - dayend) / speed;
-        temp.y = Beginposition.y - (Beginposition.y - Endposition.y) * (Time.time - dayend) / speed;
-        temp.z = Beginposition.z - (Beginposition.z - Endposition.z) * (Time.time - dayend) / speed;
-        if (ifday) Light.transform.position = temp;
+        temp.x = beginPosition.x - (beginPosition.x - endPosition.x) * (Time.time - dayend) / speed;
+        temp.y = beginPosition.y - (beginPosition.y - endPosition.y) * (Time.time - dayend) / speed;
+        temp.z = beginPosition.z - (beginPosition.z - endPosition.z) * (Time.time - dayend) / speed;
+        if (ifday) light.transform.position = temp;
         if (Time.time - dayend > speed)
             if (!ifday)
         {
             dayend = Time.time;
-            Light.transform.position = Beginposition;
+            light.transform.position = beginPosition;
             ifday = true;
-            Light.SetActive(true);
+            light.SetActive(true);
         }
         else
         {
             dayend = Time.time;
             ifday = false;
-            Light.SetActive(false);
+            light.SetActive(false);
         }
         
 	}
