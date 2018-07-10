@@ -7,6 +7,7 @@ public class Sunlight : MonoBehaviour {
     
     public float range;
     public float speed;
+    public bool ifDay;
     // light is set using unity-editor
     public GameObject light;
 	// Update is called once per frame
@@ -21,5 +22,15 @@ public class Sunlight : MonoBehaviour {
         temp.z = center.z;
         temp.y = Mathf.Cos(Time.time/speed) * range;
         light.transform.position = temp;
+        if (!ifDay) if (temp.y>0)
+            {
+                ifDay = true;
+                light.SetActive(true);
+            }
+        if (ifDay) if (temp.y<0)
+            {
+                ifDay = false;
+                light.SetActive(false);
+            }
     }
 }

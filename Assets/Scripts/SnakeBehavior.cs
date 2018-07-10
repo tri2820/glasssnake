@@ -32,6 +32,12 @@ public class SnakeBehavior : MonoBehaviour {
     public GameObject platform;
     bool flagDie = false;
     public SpawnFood foodController;
+
+    public bool ifJump = false;
+    public bool ifDrop = true;
+    public float speedJump = 0.5f;
+    public float highJump = 2;
+    public float timeJumpEnd = 0;
     void Start () {
         foodController = platform.GetComponent<SpawnFood>();
         StartGame(initLength);
@@ -42,8 +48,8 @@ public class SnakeBehavior : MonoBehaviour {
         initLength = length;
         Debug.Log("You called StartGame! initLength = " + initLength);
         flagDie = false;
-
-
+        ifDrop = true;
+        ifJump = false;
         foodController.LetDestroyFood();
         foodController.LetSpawnFood();
 
@@ -103,6 +109,28 @@ public class SnakeBehavior : MonoBehaviour {
 
     public void Move(){
         float realspeed = speed;
+        if (body[0].position.y==0)
+        if (Input.GetKey(KeyCode.Space))
+            if (ifJump == false)
+            {
+                ifDrop = false;
+                ifJump = true;
+            }
+        if (ifJump)
+        {
+            Vector3 xtemp = body[0].position;
+            xtemp.y += Time.smoothDeltaTime * speedJump;
+            if (xtemp.y>highJump) { ifJump = false;ifDrop = true; }
+            body[0].position = xtemp;
+        }
+        if (body[0].position.y>0)
+        if (ifDrop)
+            {
+                Vector3 xtemp = body[0].position;
+                xtemp.y -= Time.smoothDeltaTime * speedJump;
+                if (xtemp.y<0) { xtemp.y = 0;timeJumpEnd = Time.time; }
+                body[0].position = xtemp;
+            }
         if (Input.GetKey(KeyCode.UpArrow))
             realspeed = speed * 2;
         if (Input.GetKey(KeyCode.DownArrow))
@@ -125,6 +153,9 @@ public class SnakeBehavior : MonoBehaviour {
         {
             Transform curbody = body[i];
             Transform prebody = body[i - 1];
+            Vector3 suppertemp = curbody.position;
+            if (curbody.position.y<0.05 && ifJump==false && prebody.position.y==0) suppertemp.y = 0;
+            curbody.position = suppertemp;
             float dist = Vector3.Distance(curbody.position, prebody.position);
             float ripdist = Vector3.Distance(curbody.position, body[0].position);
             if (Time.time - timeLastPlay > 5)

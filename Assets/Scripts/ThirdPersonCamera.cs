@@ -17,8 +17,9 @@ public class ThirdPersonCamera : MonoBehaviour {
     
     public void Move()
     {
-
-        transform.position = target.position;
+        Vector3 pos = target.position;
+        pos.y = 0;
+        transform.position = pos;
         transform.rotation = target.rotation;
 
     }
